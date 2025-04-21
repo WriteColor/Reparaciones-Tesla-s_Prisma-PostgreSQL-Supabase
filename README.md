@@ -1,1 +1,0 @@
-# Reparaciones-Tesla-s---SQLite--Prisma
