@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model imagenes_ordenes {
+  id             Int               @id @default(autoincrement())
+  orden_id       Int
+  nombre_archivo String
+  tipo_archivo   String
+  ruta_imagen    String?
+  fecha_creacion DateTime          @default(now())
+
+  ordenesdetrabajo ordenesdetrabajo @relation(fields: [orden_id], references: [Id], onDelete: Cascade)
+}
+
+model marcas {
+  id          Int     @id @default(autoincrement())
+  NombreMarca String?
+}
+
+model ordenesdetrabajo {
+  Id                Int                @id @default(autoincrement())
+  NombreCliente     String
+  Identidad         String
+  TelefonoPrincipal String?
+  TelefonoSecundario String?
+  Modelo            String?
+  Marca             String?
+  TipoEquipo        String?
+  NumeroSerie       String?
+  Diagnostico       String?
+  Reparacion        String?
+  FechaEntrada      DateTime           @default(now())
+  FechaCreacion_Orden DateTime         @default(now())
+
+  imagenes_ordenes  imagenes_ordenes[]
+}
+
+model remember_tokens {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  token      String
+  created_at DateTime @default(now())
+  expires_at DateTime?
+
+  users users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model sessions {
+  id            String   @id
+  user_id       Int
+  ip_address    String
+  user_agent    String?
+  payload       String?
+  last_activity Int
+  expires_at    BigInt
+
+  users users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model tiposdeequipo {
+  id         Int     @id @default(autoincrement())
+  NombreTipo String?
+}
+
+model users {
+  id         Int               @id @default(autoincrement())
+  username   String            @unique
+  password   String
+  created_at DateTime          @default(now())
+  updated_at DateTime          @updatedAt
+
+  remember_tokens remember_tokens[]
+  sessions        sessions[]
+}
